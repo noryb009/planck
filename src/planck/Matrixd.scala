@@ -6,6 +6,7 @@ case class Matrixd(entries: Seq[Vecd]) {
   val sizeX = entries.size
   val sizeY = if(entries.isEmpty) 0 else entries.head.size
   def apply(i: Int): Vecd = entries(i)
+  def apply(x: Int, y: Int): Double = entries(x)(y)
 
   private def singleVecMult(vec: Vecd) = {
     Seq.tabulate(sizeY){i =>
