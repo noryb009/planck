@@ -1,3 +1,4 @@
 package planck
 
-class SizeMismatchException extends RuntimeException {}
+class SizeMismatchException extends RuntimeException
+class VectorNotNormalizedException extends RuntimeException
