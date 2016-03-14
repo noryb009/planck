@@ -22,20 +22,18 @@ object Renderer {
     (x.toInt, y.toInt)
   }
 
-  def render(meshes: Seq[Mesh]) = {
-    val camera = Camera(Vecd.n(10, 0, 0), Vecd.n(0, 0, 0))
-
+  def render(camera: Camera, entities: Seq[Entity]) = {
     val viewMatrix = camera.lookMatrix
     val projectionMatrix = Matrixd.perspectiveFOV(0.78, w / h.toDouble, 0.01, 100)
     val vpMatrix = projectionMatrix * viewMatrix
 
-    val allPoints = meshes.flatMap{m =>
-      lazy val yprMatrix: Matrixd = ???
-      lazy val translateMatrix: Matrixd = ???
-      //val modelMatrix = yprMatrix * tranMatrix
-      val modelMatrix = Matrixd.id(4)
+    val allPoints = entities.flatMap{e =>
+      val m = e.mesh
+      val rotationMatrix: Matrixd = e.rotationMat
+      val translateMatrix: Matrixd = e.translationMat
+      val modelMatrix = translateMatrix * rotationMatrix
 
-      val mvpMatrix = modelMatrix * vpMatrix
+      val mvpMatrix = vpMatrix * modelMatrix
 
       def projectPoint(v: Vecd) = {
         val tPoint = mvpMatrix.transform(v)

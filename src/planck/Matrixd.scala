@@ -8,6 +8,12 @@ case class Matrixd(entries: Seq[Vecd]) {
   def apply(i: Int): Vecd = entries(i)
   def apply(x: Int, y: Int): Double = entries(x)(y)
 
+  def ~=(that: Any) = that match {
+    case t: Matrixd if sizeX == t.sizeX && sizeY == t.sizeY =>
+      t.entries.zip(entries).forall{case(x, y) => x ~= y}
+    case _ => false
+  }
+
   private def singleVecMult(vec: Vecd) = {
     Seq.tabulate(sizeY){i =>
       Seq.tabulate(sizeX){k => entries(k)(i) * vec(k) }.fold(0.0){_+_}
@@ -68,4 +74,19 @@ object Matrixd {
 
     Matrixd.n(c1, c2, c3, c4)
   }
+
+  def translation(x: Double, y: Double, z: Double) = Matrixd.n(
+    Vecd.n(1,0,0,0),
+    Vecd.n(0,1,0,0),
+    Vecd.n(0,0,1,0),
+    Vecd.n(x,y,z,1)
+  )
+
+  def scale(x: Double, y: Double, z: Double) = Matrixd.n(
+    Vecd.n(x,0,0,0),
+    Vecd.n(0,y,0,0),
+    Vecd.n(0,0,z,0),
+    Vecd.n(0,0,0,1)
+  )
+  def scaleAll(s: Double) = scale(s, s, s)
 }

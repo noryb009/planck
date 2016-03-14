@@ -6,6 +6,12 @@ case class Vecd(entries: Seq[Double]) {
   lazy val lengthSq = entries.fold(0.0){_ + Math.pow(_, 2)}
   lazy val length = Math.sqrt(lengthSq)
 
+  def ~=(that: Any) = that match {
+    case Vecd(e) if e.size == size =>
+      e.zip(entries).forall{case(x, y) => x-y < 0.01}
+    case _ => false
+  }
+
   def c(other: Vecd) =
     if(size != other.size)
       throw new SizeMismatchException
