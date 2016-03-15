@@ -18,7 +18,8 @@ case class Camera(position: Vecd, target: Vecd, up: Vecd = Vecd.n(0, 1, 0)) {
 
 }
 
-case class Mesh(name: String = "", vertices: Seq[Vecd])
+case class Face(a: Int, b: Int, c: Int)
+case class Mesh(name: String = "", vertices: Seq[Vecd], faces: Seq[Face])
 case class YPR(yaw: Double, pitch: Double, roll: Double)
 case class Entity(mesh: Mesh, translationVec: Option[Vecd] = None, ypr: Option[YPR] = None) {
   val translationMat = translationVec match {

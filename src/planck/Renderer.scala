@@ -65,13 +65,15 @@ object Renderer {
         pointToScreen(tPoint)
       }
 
-      val points = m.vertices.map(projectPoint)
+      val points = m.vertices.map(projectPoint).toIndexedSeq
 
-      val pointsShifted = points.tail :+ points.head
+      val linePoints = m.faces.flatMap{f =>
+        drawLine(points(f.a), points(f.b)) ++
+        drawLine(points(f.a), points(f.c)) ++
+        drawLine(points(f.b), points(f.c))
+      }
 
-      val linePoints = points.zip(pointsShifted).flatMap{case(a, b) => drawLine(a, b)}
-
-      points ++ linePoints
+      linePoints
     }
 
     allPoints.map{v => (v(0).toInt, v(1).toInt)}.toSet
