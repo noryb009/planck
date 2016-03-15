@@ -1,5 +1,7 @@
 package planck
 
+import scala.annotation.tailrec
+
 /** A 3D renderer, based on
   * https://blogs.msdn.microsoft.com/davrous/2013/06/13/tutorial-series-learning-how-to-write-a-3d-soft-engine-from-scratch-in-c-typescript-or-javascript/
   */
@@ -20,7 +22,7 @@ object Renderer {
     // If v.y is 1, it is at top of the screen.
     val y = (-v(1) + 1) * h / 2
 
-    Vecd.n(x, y) // TODO: Should x and y be converted to integers?
+    Vecd.n(x.toInt, y.toInt)
   }
 
   /** Creates a sequence of vectors representing points on a line.
@@ -33,18 +35,37 @@ object Renderer {
     if(v1.size != 2 || v2.size != 2)
       throw new SizeMismatchException
 
-    // TODO: Make tail recursive, if possible.
-    def breakMidpoints(v1: Vecd, v2: Vecd): Seq[Vecd] = {
-      val diff = v1 - v2
-      if(diff.lengthSq < 4) // diff.length < 2
-        Seq()
+    val x1 = v1(0).toInt
+    val y1 = v1(1).toInt
+    val x2 = v2(0).toInt
+    val y2 = v2(1).toInt
+
+    val dx = Math.abs(x1 - x2)
+    val dy = Math.abs(y1 - y2)
+    val sx = if(x1 < x2) 1 else -1
+    val sy = if(y1 < y2) 1 else -1
+    val err = dx - dy
+
+    @tailrec
+    def stepBresenham(x1: Int, y1: Int, err: Int, acc: List[Vecd] = List()): Seq[Vecd] = {
+      val newAcc = Vecd.n(x1, y1) +: acc
+
+      if(x1 == x2 && y1 == y2)
+        acc
       else {
-        val mid = v2 + (diff * 0.5)
-        mid +: (breakMidpoints(v1, mid) ++ breakMidpoints(mid, v2))
+        val err2 = err * 2
+
+        val nextX = err2 > -dy
+        val nextY = err2 < dx
+        val newX = if(nextX) x1 + sx else x1
+        val newY = if(nextY) y1 + sy else y1
+        val newErr = err + (if(nextY) dx else 0) - (if(nextX) dy else 0)
+
+        stepBresenham(newX, newY, newErr, newAcc)
       }
     }
 
-    breakMidpoints(v1, v2)
+    stepBresenham(x1, y1, err)
   }
 
   def render(camera: Camera, entities: Seq[Entity]) = {
