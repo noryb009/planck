@@ -19,7 +19,32 @@ object Renderer {
     // If v.y is 0, it is in middle of the screen.
     // If v.y is 1, it is at top of the screen.
     val y = (-v(1) + 1) * h / 2
-    (x.toInt, y.toInt)
+
+    Vecd.n(x, y) // TODO: Should x and y be converted to integers?
+  }
+
+  /** Creates a sequence of vectors representing points on a line.
+    *
+    * @param v1 The first vertex.
+    * @param v2 The second vertex.
+    * @return A sequence of points in the line.
+    */
+  def drawLine(v1: Vecd, v2: Vecd) = {
+    if(v1.size != 2 || v2.size != 2)
+      throw new SizeMismatchException
+
+    // TODO: Make tail recursive, if possible.
+    def breakMidpoints(v1: Vecd, v2: Vecd): Seq[Vecd] = {
+      val diff = v1 - v2
+      if(diff.lengthSq < 4) // diff.length < 2
+        Seq()
+      else {
+        val mid = v2 + (diff * 0.5)
+        mid +: (breakMidpoints(v1, mid) ++ breakMidpoints(mid, v2))
+      }
+    }
+
+    breakMidpoints(v1, v2)
   }
 
   def render(camera: Camera, entities: Seq[Entity]) = {
@@ -42,9 +67,13 @@ object Renderer {
 
       val points = m.vertices.map(projectPoint)
 
-      points
+      val pointsShifted = points.tail :+ points.head
+
+      val linePoints = points.zip(pointsShifted).flatMap{case(a, b) => drawLine(a, b)}
+
+      points ++ linePoints
     }
 
-    allPoints.toSet
+    allPoints.map{v => (v(0).toInt, v(1).toInt)}.toSet
   }
 }

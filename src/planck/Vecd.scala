@@ -18,15 +18,17 @@ case class Vecd(entries: Seq[Double]) {
 
   def +(other: Vecd) = {
     c(other)
-    Vecd(Seq.tabulate(size){x => this(x) + other(x)})
+    Vecd(entries.zip(other.entries).map{case(a, b) => a + b})
   }
   def -(other: Vecd) = {
     c(other)
-    Vecd(Seq.tabulate(size){x => this(x) - other(x)})
+    Vecd(entries.zip(other.entries).map{case(a, b) => a - b})
   }
+  def *(n: Double) = Vecd(entries.map{_ * n})
+
   def dot(other: Vecd) = {
     c(other)
-    Seq.tabulate(size){x => this(x) * other(x)}.fold(0.0){_+_}
+    entries.zip(other.entries).map{case(a, b) => a * b}.fold(0.0){_+_}
   }
 
   private def innerCross(other: Vecd) = Vecd(Seq(

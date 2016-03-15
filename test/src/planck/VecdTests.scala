@@ -18,6 +18,14 @@ class VecdTests extends FunSpec {
     }
   }
 
+  describe("*") {
+    it("multiplies all elements by a scalar") {
+      assert(v(1, 2, 3) * 2 == v(2, 4, 6))
+      assert(v() * 2 == v())
+      assert(v(4, -8, 2) * 0.5 == v(2, -4, 1))
+    }
+  }
+
   describe("dot") {
     it("finds the dot product of vectors") {
       assert((v(1, 6) dot v(5, 2)) == 5 + 12)
