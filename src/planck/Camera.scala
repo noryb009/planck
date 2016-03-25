@@ -1,5 +1,7 @@
 package planck
 
+import java.awt.Color
+
 case class Camera(position: Vecd, target: Vecd, up: Vecd = Vecd.n(0, 1, 0)) {
   if(up.lengthSq != 1.0)
     throw new VectorNotNormalizedException
@@ -8,8 +10,11 @@ case class Camera(position: Vecd, target: Vecd, up: Vecd = Vecd.n(0, 1, 0)) {
   lazy val lookMatrix = {
     // based on https://msdn.microsoft.com/bb281711
     val z = lookDirOpp
-    val y = up
-    val x = (y cross z).normalize
+    val y2 = up
+    val x2 = y2 cross z
+    val y = (z cross x2).normalize
+    val x = x2.normalize
+
     val cols = (0 until 3).map{i => Vecd.n(x(i), y(i), z(i), 0)}
     val lastCol = Vecd(Seq(x, y, z).map{v => -(v dot position)} :+ 1.0)
 
@@ -18,7 +23,7 @@ case class Camera(position: Vecd, target: Vecd, up: Vecd = Vecd.n(0, 1, 0)) {
 
 }
 
-case class Face(a: Int, b: Int, c: Int)
+case class Face(a: Int, b: Int, c: Int, colour: Color = Color.WHITE)
 case class Mesh(name: String = "", vertices: Seq[Vecd], faces: Seq[Face])
 case class YPR(yaw: Double, pitch: Double, roll: Double)
 case class Entity(mesh: Mesh, translationVec: Option[Vecd] = None, ypr: Option[YPR] = None) {
