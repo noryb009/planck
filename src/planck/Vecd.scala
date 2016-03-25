@@ -3,7 +3,7 @@ package planck
 case class Vecd(entries: Seq[Double]) {
   def size = entries.size
   def apply(x: Int) = entries(x)
-  lazy val lengthSq = entries.fold(0.0){_ + Math.pow(_, 2)}
+  lazy val lengthSq = entries.map{Math.pow(_, 2)}.sum
   lazy val length = Math.sqrt(lengthSq)
 
   def ~=(that: Any) = that match {
@@ -28,7 +28,7 @@ case class Vecd(entries: Seq[Double]) {
 
   def dot(other: Vecd) = {
     c(other)
-    entries.zip(other.entries).map{case(a, b) => a * b}.fold(0.0){_+_}
+    entries.zip(other.entries).map{case(a, b) => a * b}.sum
   }
 
   private def innerCross(other: Vecd) = Vecd(Seq(
@@ -48,7 +48,7 @@ case class Vecd(entries: Seq[Double]) {
     if(lengthSq == 0.0)
       Vecd(Seq.fill(size){0.0})
     else
-      Vecd(Seq.tabulate(size){this(_) / length})
+      Vecd(entries.map{_ / length})
   }
 }
 
