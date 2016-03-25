@@ -5,31 +5,7 @@ import javax.swing.{JPanel, JFrame}
 import planck._
 
 object Main extends App {
-  def v(e: Double*) = Vecd(e)
-  val f = Face
-  val cube = Mesh("Cube", Seq(
-    v(-1, -1, -1), // 0
-    v(-1, -1,  1), // 1
-    v(-1,  1, -1), // 2
-    v(-1,  1,  1), // 3
-    v( 1, -1, -1), // 4
-    v( 1, -1,  1), // 5
-    v( 1,  1, -1), // 6
-    v( 1,  1,  1)  // 7
-  ), Seq(
-    f(0, 3, 1),
-    f(0, 3, 2),
-    f(0, 5, 1),
-    f(0, 5, 4),
-    f(0, 6, 2),
-    f(0, 6, 4),
-    f(7, 1, 3),
-    f(7, 1, 5),
-    f(7, 2, 3),
-    f(7, 2, 6),
-    f(7, 4, 5),
-    f(7, 4, 6)
-  ))
+  val cube = ObjReader.read("cube.obj").head
 
   class Panel extends JPanel {
     val canvas: BufferedImage = new BufferedImage(Renderer.w, Renderer.h, BufferedImage.TYPE_INT_RGB)
