@@ -163,7 +163,7 @@ object Renderer {
       val key = (v(0), v(1))
       val z = v(2)
       m.get(key) match {
-        case Some((z2, _)) if z >= z2 => m
+        case Some((z2, _)) if z >= z2 - 0.001 => m
         case _ => m + (key -> (z, c))
       }
     }
