@@ -16,10 +16,7 @@ object Main extends App {
       val black = new Color(0, 0, 0)
       (0 until Renderer.w).foreach{x =>
         (0 until Renderer.h).foreach{y =>
-          val c = if(points(x, y))
-            white
-          else
-            black
+          val c = points(x, y)
           canvas.setRGB(x, y, c.getRGB)
         }
       }
